@@ -294,7 +294,7 @@ public class MetaService {
     
     @Transactional
     public void vencerMetas() {
-        em.createNativeQuery("BEGIN sp_vencer_metas; END;").executeUpdate();
+        em.createNativeQuery("CALL sp_vencer_metas()").executeUpdate();
     }
     
     private void validarMonto(BigDecimal monto) {
@@ -305,9 +305,15 @@ public class MetaService {
     
     private NegocioException traducir(DataAccessException ex) {
         Throwable t = ex.getMostSpecificCause();
-        if (t instanceof SQLException sql && sql.getErrorCode() >= 20000 && sql.getErrorCode() <= 20999) {
-            String msg = sql.getMessage().split("\n")[0].replaceFirst("^ORA-\\d+:\\s*", "");
-            return new NegocioException(msg);
+        if (t instanceof SQLException sql) {
+            boolean isOracleCustom = sql.getErrorCode() >= 20000 && sql.getErrorCode() <= 20999;
+            boolean isPostgresCustom = "P0001".equals(sql.getSQLState());
+            if (isOracleCustom || isPostgresCustom) {
+                String msg = sql.getMessage().split("\n")[0]
+                        .replaceFirst("^(?i)(?:ERROR:\\s*|ORA-\\d+:\\s*)", "")
+                        .trim();
+                return new NegocioException(msg);
+            }
         }
         throw ex;
     }

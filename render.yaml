@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: gestor-financiero
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: migracion-postgresql
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: DB_HOST
+        fromDatabase:
+          name: gestor-financiero-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: gestor-financiero-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: gestor-financiero-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: gestor-financiero-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gestor-financiero-db
+          property: password
+
+databases:
+  - name: gestor-financiero-db
+    databaseName: gestor_financiero
+    user: financista
+    plan: free
+    region: oregon
