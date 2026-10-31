@@ -36,7 +36,7 @@ spring.datasource.username=${DB_USER:FINANCISTA}
 spring.datasource.password=${DB_PASSWORD}
 spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
 
-spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.ddl-auto=none
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.OracleDialect
 spring.jpa.show-sql=false
 ```
